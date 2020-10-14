@@ -101,7 +101,7 @@ class MultiDatasetIterator(IterableDataset):
             try:
                 result = self.output_queue.get(True, timeout=timeout)
                 assert isinstance(result, (tuple, list, dict))
-                result = copy_and_delete_tensors(result)
+                result = copy_and_delete_tensors(result, pin_memory=self.pin_memory)
                 return result
             except queue.Empty:
                 D("queue empty")

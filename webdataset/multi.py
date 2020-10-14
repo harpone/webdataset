@@ -35,7 +35,7 @@ def maybe_copy(a, pin_memory):
         if pin_memory:
             return a.pin_memory()
         else:
-            return torch.new_tensor(a)
+            return a.clone()
     else:
         return a
 

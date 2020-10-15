@@ -354,7 +354,6 @@ class SampleIterator(Pipeline):
 
     def raw_samples(self, urls):
         #assert isinstance(urls, list)  # TODO
-        print('TEST!!!!!!!!!!!!!!!!!!')
         for url in urls:
             url = str(url, encoding='utf-8')
             self.shard_hook()

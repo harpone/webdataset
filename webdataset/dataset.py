@@ -21,6 +21,7 @@ import re
 import tarfile
 import time
 import warnings
+import numpy as np
 from builtins import range
 
 import braceexpand
@@ -352,8 +353,9 @@ class SampleIterator(Pipeline):
             self.pipe(stage)
 
     def raw_samples(self, urls):
-        assert isinstance(urls, list)
+        #assert isinstance(urls, list)  # TODO
         for url in urls:
+            url = str(url, encoding='utf-8')
             self.shard_hook()
             stream = None
             try:
@@ -371,7 +373,7 @@ class SampleIterator(Pipeline):
     def samples(self, urls):
         if isinstance(urls, str):
             urls = [urls]
-        assert isinstance(urls, list)
+        #assert isinstance(urls, list)  # TODO: np.string_
         self.sample_urls = urls
         source = self.raw_samples(urls)
         return filters.pipeline(source, *self.pipeline)
@@ -391,9 +393,9 @@ def worker_urls(urls):
 
     Used as a shard selection function in Dataset."""
     import torch
-
-    assert isinstance(urls, list)
-    assert isinstance(urls[0], str)
+    # TODO: assertions
+    #assert isinstance(urls, list)
+    #assert isinstance(urls[0], str)
 
     worker_info = torch.utils.data.get_worker_info()
     if worker_info is not None:
@@ -436,7 +438,8 @@ class Dataset(IterableDataset, SampleIterator):
         )
         if isinstance(urls, str):
             urls = list(braceexpand.braceexpand(urls))
-        self.urls = urls
+        #self.urls = urls
+        self.urls = np.array(urls).astype(np.string_)
         self.length = length
         self.handler = handler
         self.total = 0
@@ -450,7 +453,8 @@ class Dataset(IterableDataset, SampleIterator):
         return self.length
 
     def shard_fn(self):
-        urls = list(self.urls)
+        #urls = list(self.urls)
+        urls = self.urls
         self.reseed_hook()
         urls = self.node_selection(urls)
         urls = self.shard_selection(urls)
